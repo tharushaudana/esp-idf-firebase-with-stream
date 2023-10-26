@@ -9,6 +9,7 @@ static const char *TAG = "FWS";
 
 firebase_with_stream::firebase_with_stream()
 {
+    _auth.netstat = &_netstat;
     _auth.config = &_config;
     _auth.credentials = &_credentials;
     _auth.token_data = &_token_data;
@@ -26,6 +27,11 @@ void firebase_with_stream::set_config(firebase_config_t c)
 void firebase_with_stream::set_credentials(firebase_credentials_t c) 
 {
     _credentials = c;
+}
+
+void firebase_with_stream::set_wifi_connected(bool b) 
+{
+    _netstat.wifi_connected = b;
 }
 
 void firebase_with_stream::begin() 

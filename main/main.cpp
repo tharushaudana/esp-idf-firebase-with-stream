@@ -16,13 +16,14 @@
 
 static const char *TAG = "TAG";
 
-#include "wifi_utilities.h"
 #include "firebase-with-stream.h"
 
 firebase_config_t fb_config;
 firebase_credentials_t fb_credentials;
 
 firebase_with_stream firebase;
+
+#include "wifi_utilities.h"
 
 extern "C" void app_main(void)
 {
@@ -42,7 +43,7 @@ extern "C" void app_main(void)
     fb_config.db_url = "https://greenhouse-project-bec1e-default-rtdb.firebaseio.com";
 
     fb_credentials.email = "tharusha.udana529@gmail.com";
-    fb_credentials.password = "tha";
+    fb_credentials.password = "tha2003";
 
     firebase.set_config(fb_config);
     firebase.set_credentials(fb_credentials);

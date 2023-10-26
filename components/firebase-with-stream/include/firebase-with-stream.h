@@ -1,6 +1,18 @@
 #include <string>
 #include <stdlib.h>
 
+const uint16_t HTTP_MAX_RECV_BUFFER_SIZE = 2048;
+
+typedef struct firebase_netstat_t
+{
+    bool wifi_connected = false;
+
+    bool is_ready()
+    {
+        return wifi_connected;
+    }
+};
+
 typedef struct firebase_config_t
 {
     std::string api_key = "";
@@ -36,10 +48,12 @@ private:
     static void _loop_task(void *param);
 
     void _sign_in();
+    void _cycle();
 public:
     _firebase_auth();
     ~_firebase_auth();
 
+    firebase_netstat_t *netstat;
     firebase_config_t *config;
     firebase_credentials_t *credentials;
     firebase_token_data_t *token_data;
@@ -56,6 +70,7 @@ CLASS : FIREBASE WITH STREAM (MAIN)
 class firebase_with_stream
 {
 private:
+    firebase_netstat_t _netstat;
     firebase_config_t _config;
     firebase_credentials_t _credentials;
     firebase_token_data_t _token_data;
@@ -67,6 +82,8 @@ public:
 
     void set_config(firebase_config_t c);
     void set_credentials(firebase_credentials_t c);
+
+    void set_wifi_connected(bool b);
 
     void begin();
 };
