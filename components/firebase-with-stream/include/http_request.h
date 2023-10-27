@@ -15,6 +15,7 @@ http_response_result_t http_make_request(const char* url, const char* data, esp_
     esp_http_client_config_t config = {
         .url = url,
         .method = method,
+        .buffer_size_tx = 4096,
         .crt_bundle_attach = esp_crt_bundle_attach,
     };
 
