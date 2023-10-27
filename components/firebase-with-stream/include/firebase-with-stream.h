@@ -36,7 +36,7 @@ typedef struct firebase_credentials_t
 typedef struct firebase_token_data_t
 {
     std::string id_token = "";
-    std::string refresh_token = "";
+    std::string refresh_token = "AMf-vBxHihNxVrGHMyK1awN-PNGF8JfHAfLQ1hIuNjJwa4xi2bR10O9O_Q3ux1HzxWGv8tpJKKe5GHfy1zprN_5RZqzp2wUBIK0ddC50HQIO5pqb60b_BDbgKSRf576Z-9wOtXo0VBWR2Hqo0A6Qk1u9qpdlOdlzA9QFvaRwAnaVQajWTx4zzDlwxfJW5rrcd3nf6eo7HW649OoMFDLNnxhI8MVDR4m6nJEz0rm8l0BozHcunSADjTKQ1gC1FRUnFpQ5KfWcmEcv";
     int expires_in = 0;
     //---
     bool is_valid = false;

@@ -49,6 +49,11 @@ static void _update_test_task(void *param)
     }
 }
 
+static void _test_task(void *param)
+{
+    vTaskDelay(20000 / portTICK_PERIOD_MS);
+}
+
 extern "C" void app_main(void)
 {
     //Initialize NVS
@@ -75,6 +80,7 @@ extern "C" void app_main(void)
     firebase.begin();
 
     firebase.begin_stream(&stream01);
-
     xTaskCreate(&_update_test_task, "_update_test_task", 4096, NULL, 5, NULL);
+
+    //xTaskCreate(&_test_task, "_test_task", 4096, this, 5, NULL);
 }

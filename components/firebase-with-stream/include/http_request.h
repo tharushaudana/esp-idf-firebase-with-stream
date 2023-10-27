@@ -1,4 +1,5 @@
-const uint16_t HTTP_MAX_RECV_BUFFER_SIZE = 2048;
+const uint16_t HTTP_MAX_RECV_BUFFER_SIZE = 4096;
+const uint16_t HTTP_MAX_SEND_BUFFER_SIZE = 4096;
 
 struct http_response_result_t
 {
@@ -22,7 +23,7 @@ public:
         esp_http_client_config_t config = {
             .url = url,
             .method = method,
-            .buffer_size_tx = 4096,
+            .buffer_size_tx = HTTP_MAX_SEND_BUFFER_SIZE,
             .crt_bundle_attach = esp_crt_bundle_attach,
         };
 

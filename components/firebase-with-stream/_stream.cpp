@@ -61,7 +61,7 @@ void firebase_stream::_run_stream()
 
     esp_http_client_config_t config = {
         .url = url.c_str(),
-        .buffer_size_tx = 4096,
+        .buffer_size_tx = HTTP_MAX_SEND_BUFFER_SIZE,
         .crt_bundle_attach = esp_crt_bundle_attach,
     };
 
