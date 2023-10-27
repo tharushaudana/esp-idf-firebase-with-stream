@@ -25,6 +25,30 @@ firebase_with_stream firebase;
 
 #include "wifi_utilities.h"
 
+firebase_stream stream01("/test/o1/.json", [](char c) {
+
+});
+
+static void _update_test_task(void *param)
+{
+    while (1)
+    {
+        std::string json_data = 
+                        "{"
+                        "\"k1\":\"v22\","
+                        "\"k2\":\"v23\","
+                        "\"k3\":\"v24\""
+                        "}";
+
+        firebase.crud.update("/test/o2/.json", json_data.c_str());
+        
+        size_t s = esp_get_free_heap_size();
+        ESP_LOGI(TAG, "free heap: %u", s);
+
+        vTaskDelay(5000 / portTICK_PERIOD_MS);
+    }
+}
+
 extern "C" void app_main(void)
 {
     //Initialize NVS
@@ -49,4 +73,8 @@ extern "C" void app_main(void)
     firebase.set_credentials(fb_credentials);
 
     firebase.begin();
+
+    firebase.begin_stream(&stream01);
+
+    xTaskCreate(&_update_test_task, "_update_test_task", 4096, NULL, 5, NULL);
 }

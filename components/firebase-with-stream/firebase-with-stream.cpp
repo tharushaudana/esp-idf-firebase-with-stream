@@ -13,6 +13,10 @@ firebase_with_stream::firebase_with_stream()
     _auth.config = &_config;
     _auth.credentials = &_credentials;
     _auth.token_data = &_token_data;
+
+    crud.netstat = &_netstat;
+    crud.config = &_config;
+    crud.token_data = &_token_data;
 }
 
 firebase_with_stream::~firebase_with_stream()
@@ -37,4 +41,12 @@ void firebase_with_stream::set_wifi_connected(bool b)
 void firebase_with_stream::begin() 
 {
     _auth.init();
+}
+
+void firebase_with_stream::begin_stream(firebase_stream *stream) 
+{
+    stream->netstat = &_netstat;
+    stream->config = &_config;
+    stream->token_data = &_token_data;
+    stream->start();
 }
