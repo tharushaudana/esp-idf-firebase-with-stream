@@ -14,7 +14,7 @@
 #include "lwip/err.h"
 #include "lwip/sys.h"
 
-static const char *TAG = "TAG";
+static const char *TAG = "MAIN";
 
 #include "firebase-with-stream.h"
 
