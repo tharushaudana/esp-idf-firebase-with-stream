@@ -25,17 +25,32 @@ firebase_with_stream firebase;
 
 #include "wifi_utilities.h"
 
-json_stream_parser jparser;
+json_stream_parser jparser1;
+json_stream_parser jparser2;
 
-firebase_stream stream01("/GHC008109272/Settings/.json", [](char c) {
-  if (jparser.parse(c))
+firebase_stream stream_01([](char c) {
+  if (jparser1.parse(c))
   {
-    if (jparser.path == "/path")
+    if (jparser1.path == "/path")
     {
-      jparser.replace_prefix_path("/data", jparser.value.val);
+      jparser1.replace_prefix_path("/data", jparser1.value.val);
+      return;
     }
     
-    printf("%s --> %s\n", jparser.path.c_str(), jparser.value.val.c_str());
+    printf("%s --> %s\n", jparser1.path.c_str(), jparser1.value.val.c_str());
+  }
+});
+
+firebase_stream stream_02([](char c) {
+  if (jparser2.parse(c))
+  {
+    if (jparser2.path == "/path")
+    {
+      jparser2.replace_prefix_path("/data", jparser2.value.val);
+      return;
+    }
+    
+    printf("%s --> %s\n", jparser2.path.c_str(), jparser2.value.val.c_str());
   }
 });
 
@@ -89,7 +104,9 @@ extern "C" void app_main(void)
 
     firebase.begin();
 
-    firebase.begin_stream(&stream01);
+    firebase.begin_stream(&stream_01, "/GHC008109272/Settings/.json");
+    firebase.begin_stream(&stream_02, "/GHC008109272/IO/Output/.json");
+
     xTaskCreate(&_update_test_task, "_update_test_task", 4096, NULL, 5, NULL);
 
     //xTaskCreate(&_test_task, "_test_task", 4096, this, 5, NULL);

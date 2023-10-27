@@ -43,10 +43,11 @@ void firebase_with_stream::begin()
     _auth.init();
 }
 
-void firebase_with_stream::begin_stream(firebase_stream *stream) 
+void firebase_with_stream::begin_stream(firebase_stream *stream, const char* path) 
 {
     stream->netstat = &_netstat;
     stream->config = &_config;
     stream->token_data = &_token_data;
+    stream->path = path;
     stream->start();
 }

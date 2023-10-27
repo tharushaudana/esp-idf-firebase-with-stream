@@ -2,24 +2,23 @@
 
 static const char *TAG = "FWS:STREAM";
 
-event_source_stream_parser eparser("event", "data");
+//event_source_stream_parser eparser("event", "data");
 
-firebase_stream::firebase_stream(const char* path, on_firebase_stream_data_cb_t cb)
+firebase_stream::firebase_stream(on_firebase_stream_data_cb_t cb) : eparser("event", "data")
 {
-    _path = path;
     _cb = cb;
 }
 
 firebase_stream::~firebase_stream()
 {
-    delete[] _path;
+    delete[] path;
 }
 
 void firebase_stream::_loop_task(void *param) 
 {
     firebase_stream* instance = static_cast<firebase_stream*>(param);
 
-    ESP_LOGI(TAG, "[path: %s] >>> STARTED.", instance->_path);
+    ESP_LOGI(TAG, "[path: %s] >>> STARTED.", instance->path);
 
     while (instance->is_started)
     {
@@ -27,7 +26,7 @@ void firebase_stream::_loop_task(void *param)
         vTaskDelay(5000 / portTICK_PERIOD_MS);
     }   
 
-    ESP_LOGI(TAG, "[path: %s] >>> STOPPED.", instance->_path);
+    ESP_LOGI(TAG, "[path: %s] >>> STOPPED.", instance->path);
 
     vTaskDelete(NULL);
 }
@@ -47,17 +46,17 @@ void firebase_stream::_run_stream()
 {
     if (!netstat->is_ready()) 
     {
-        ESP_LOGW(TAG, "[path: %s] >>> Network is not ready! Unable to continue.", _path);
+        ESP_LOGW(TAG, "[path: %s] >>> Network is not ready! Unable to continue.", path);
         return;
     }
 
     if (!token_data->is_valid)
     {
-        ESP_LOGW(TAG, "[path: %s] >>> current token is not valid!", _path);
+        ESP_LOGW(TAG, "[path: %s] >>> current token is not valid!", path);
         return;
     }
 
-    std::string url = config->db_url + _path + "?auth=" + token_data->id_token;
+    std::string url = config->db_url + path + "?auth=" + token_data->id_token;
 
     char *buffer = new char[HTTP_MAX_RECV_BUFFER_SIZE + 1];
 
@@ -73,12 +72,12 @@ void firebase_stream::_run_stream()
 
     esp_err_t err;
     if ((err = esp_http_client_open(client, 0)) != ESP_OK) {
-        ESP_LOGE(TAG, "[path: %s] >>> Failed to open HTTP connection!", _path);
+        ESP_LOGE(TAG, "[path: %s] >>> Failed to open HTTP connection!", path);
         delete[] buffer;
         return;
     }
 
-    ESP_LOGI(TAG, "[path: %s] >>> Connection opened.", _path);
+    ESP_LOGI(TAG, "[path: %s] >>> Connection opened.", path);
 
     int content_length =  esp_http_client_fetch_headers(client);
     int status_code = esp_http_client_get_status_code(client);
@@ -113,7 +112,7 @@ void firebase_stream::_run_stream()
                     }
                     else if (eparser.event == "keep-alive")
                     {
-                        
+                        //ESP_LOGI(TAG, "[path: %s] >>> keep-alive.", path);   
                     }
                     else if (eparser.event == "auth_revoked")
                     {
@@ -129,7 +128,7 @@ void firebase_stream::_run_stream()
         }
     }
 
-    ESP_LOGW(TAG, "[path: %s] >>> Connection closed.", _path);
+    ESP_LOGW(TAG, "[path: %s] >>> Connection closed.", path);
 
     esp_http_client_close(client);
     esp_http_client_cleanup(client);

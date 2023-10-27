@@ -112,8 +112,6 @@ void _firebase_auth::_token_refresh()
         {
             if (jparser.parse(buffer[i]))
             {
-                ESP_LOGI(TAG, "%s --> %s", jparser.path.c_str(), jparser.value.val.c_str());
-
                 if (jparser.path == "/id_token")
                 {
                     token_data->id_token = jparser.value.val;
