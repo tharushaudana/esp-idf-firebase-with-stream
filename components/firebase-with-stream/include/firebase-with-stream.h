@@ -62,7 +62,6 @@ typedef struct firebase_token_data_t
         if (b) 
         {
             ESP_LOGI("DDD", "expires_in: %d", expires_in);
-            is_valid = true;
         }
 
         is_valid = b;
