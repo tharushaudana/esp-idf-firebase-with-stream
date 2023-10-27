@@ -152,7 +152,7 @@ void _firebase_auth::_cycle()
         _token_refresh();
     }
 
-    token_data->check();
+    token_data->check(5);
 }
 
 void _firebase_auth::init() 

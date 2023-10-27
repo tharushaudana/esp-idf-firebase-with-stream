@@ -42,14 +42,15 @@ typedef struct firebase_token_data_t
     //---
     bool is_valid = false;
 
-    int64_t last_token_get = 0;
-
-    void check()
+    void check(int descrease_by)
     {
-        int64_t now = esp_timer_get_time();
-        int64_t last = abs((int16_t)expires_in * 1000000);
+        if (expires_in <= 0) return;
 
-        if (now >= last && is_valid)
+        expires_in -= descrease_by;
+
+        ESP_LOGW("DDD", "expires in: %d", expires_in);
+
+        if (expires_in <= 0)
         {
             is_valid = false;
             ESP_LOGW("FWS:TOKEN", "Expired.");
@@ -62,7 +63,6 @@ typedef struct firebase_token_data_t
         {
             ESP_LOGI("DDD", "expires_in: %d", expires_in);
             is_valid = true;
-            last_token_get = esp_timer_get_time();
         }
 
         is_valid = b;
