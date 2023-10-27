@@ -39,12 +39,6 @@ bool _firebase_crud::update(const char* path, const char *json_data)
     if (r.status_code != 200)
     {
         ESP_LOGE(TAG, "[UPDATE] >>> Response failed with code %d", r.status_code);
-
-        if (r.status_code == 401)
-        {
-            token_data->is_valid = false;
-        }
-
         delete[] buffer;
         return false;
     }

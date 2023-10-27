@@ -76,7 +76,12 @@ static void _update_test_task(void *param)
 
 static void _test_task(void *param)
 {
-    vTaskDelay(20000 / portTICK_PERIOD_MS);
+  /*while (1)
+  {
+    int64_t t = esp_timer_get_time();
+    ESP_LOGI(TAG, "time: %lld", t);
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
+  }*/
 }
 
 extern "C" void app_main(void)
@@ -109,5 +114,5 @@ extern "C" void app_main(void)
 
     xTaskCreate(&_update_test_task, "_update_test_task", 4096, NULL, 5, NULL);
 
-    //xTaskCreate(&_test_task, "_test_task", 4096, this, 5, NULL);
+    //xTaskCreate(&_test_task, "_test_task", 4096, NULL, 5, NULL);
 }

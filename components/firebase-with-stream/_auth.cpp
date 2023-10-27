@@ -73,7 +73,7 @@ void _firebase_auth::_sign_in()
         }
     }
 
-    token_data->is_valid = true;
+    token_data->set_valid(true);
     _sign_in_required = false;
 
     ESP_LOGI(TAG, "[SIGN-IN] >>> Successfully completed.");
@@ -128,7 +128,7 @@ void _firebase_auth::_token_refresh()
         }
     }
 
-    token_data->is_valid = true;
+    token_data->set_valid(true);
 
     ESP_LOGI(TAG, "[TOKEN-REFRESH] >>> Successfully completed.");
 
@@ -151,6 +151,8 @@ void _firebase_auth::_cycle()
     {
         _token_refresh();
     }
+
+    token_data->check();
 }
 
 void _firebase_auth::init() 

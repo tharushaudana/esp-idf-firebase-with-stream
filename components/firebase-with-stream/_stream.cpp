@@ -84,10 +84,7 @@ void firebase_stream::_run_stream()
 
     if (status_code != 200)
     {
-        if (status_code == 401) 
-        {
-            token_data->is_valid = false;
-        }
+        ESP_LOGE(TAG, "[path: %s] >>> Response failed with code %d", path, status_code);
         delete[] buffer;
         return;
     }

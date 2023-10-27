@@ -7,6 +7,7 @@
 #include "esp_crt_bundle.h"
 #include "esp_tls.h"
 #include "esp_log.h"
+#include "esp_timer.h"
 #include "heapless_json_stream_parser.h"
 #include "event_source_stream_parser.h"
 #include "http_request.h"
@@ -40,6 +41,32 @@ typedef struct firebase_token_data_t
     int expires_in = 0;
     //---
     bool is_valid = false;
+
+    int64_t last_token_get = 0;
+
+    void check()
+    {
+        int64_t now = esp_timer_get_time();
+        int64_t last = abs((int16_t)expires_in * 1000000);
+
+        if (now >= last && is_valid)
+        {
+            is_valid = false;
+            ESP_LOGW("FWS:TOKEN", "Expired.");
+        }        
+    }
+
+    void set_valid(bool b)
+    {
+        if (b) 
+        {
+            ESP_LOGI("DDD", "expires_in: %d", expires_in);
+            is_valid = true;
+            last_token_get = esp_timer_get_time();
+        }
+
+        is_valid = b;
+    }
 };
 
 /*
