@@ -104,8 +104,6 @@ typedef std::function<void(char c)> on_firebase_stream_data_cb_t;
 class firebase_stream
 {
 private:
-    //event_source_stream_parser eparser("event", "data");
-
     on_firebase_stream_data_cb_t _cb;
 
     static void _loop_task(void *param);

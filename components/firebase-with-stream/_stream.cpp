@@ -2,6 +2,8 @@
 
 static const char *TAG = "FWS:STREAM";
 
+event_source_stream_parser eparser("event", "data");
+
 firebase_stream::firebase_stream(const char* path, on_firebase_stream_data_cb_t cb)
 {
     _path = path;
@@ -98,10 +100,32 @@ void firebase_stream::_run_stream()
         read_len = esp_http_client_read(client, buffer, HTTP_MAX_RECV_BUFFER_SIZE);
 
         if (read_len > 0) {
-            printf("NEW_EVENT: len: %d | buffer: %.*s\n", read_len, read_len, buffer);
             size_t s = esp_get_free_heap_size();
             ESP_LOGI(TAG, "free heap: %u", s);
-        } else {
+
+            for (uint16_t i = 0; i < read_len; i++)
+            {
+                if (eparser.parse(buffer[i]))
+                {
+                    if (eparser.event == "put" || eparser.event == "patch")
+                    {
+                        _cb(eparser.data);
+                    }
+                    else if (eparser.event == "keep-alive")
+                    {
+                        
+                    }
+                    else if (eparser.event == "auth_revoked")
+                    {
+                        token_data->is_valid = false;
+                    }
+                    else if (eparser.event == "cancel")
+                    {
+                        
+                    }
+                }
+            }
+
         }
     }
 

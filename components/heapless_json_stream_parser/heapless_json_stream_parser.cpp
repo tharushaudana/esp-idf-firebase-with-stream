@@ -19,7 +19,6 @@ void json_stream_parser::reset() {
     _path.clear();
     _key.key.clear();
     _val.val.clear();
-    printf("resetted...");
 }
 
 void json_stream_parser::replace_prefix_path(std::string old_p, std::string new_p) 

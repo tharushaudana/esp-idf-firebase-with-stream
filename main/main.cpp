@@ -25,8 +25,18 @@ firebase_with_stream firebase;
 
 #include "wifi_utilities.h"
 
-firebase_stream stream01("/test/o1/.json", [](char c) {
+json_stream_parser jparser;
 
+firebase_stream stream01("/GHC008109272/Settings/.json", [](char c) {
+  if (jparser.parse(c))
+  {
+    if (jparser.path == "/path")
+    {
+      jparser.replace_prefix_path("/data", jparser.value.val);
+    }
+    
+    printf("%s --> %s\n", jparser.path.c_str(), jparser.value.val.c_str());
+  }
 });
 
 static void _update_test_task(void *param)
