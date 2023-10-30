@@ -113,7 +113,7 @@ void firebase_stream::_run_stream()
                     }
                     else if (eparser.event == "auth_revoked")
                     {
-                        token_data->is_valid = false;
+                        //token_data->is_valid = false;
                     }
                     else if (eparser.event == "cancel")
                     {
