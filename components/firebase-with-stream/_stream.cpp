@@ -58,7 +58,7 @@ void firebase_stream::_run_stream()
 
     std::string url = config->db_url + path + "?auth=" + token_data->id_token;
 
-    char *buffer = new char[HTTP_MAX_RECV_BUFFER_SIZE + 1];
+    char *buffer = new char[1];
 
     esp_http_client_config_t config = {
         .url = url.c_str(),
@@ -93,35 +93,28 @@ void firebase_stream::_run_stream()
     {
         int read_len = 0;
 
-        read_len = esp_http_client_read(client, buffer, HTTP_MAX_RECV_BUFFER_SIZE);
+        read_len = esp_http_client_read(client, buffer, 1); // set read len to 1 for very instant read.
 
         if (read_len > 0) {
-            size_t s = esp_get_free_heap_size();
-            ESP_LOGI(TAG, "free heap: %u", s);
-
-            for (uint16_t i = 0; i < read_len; i++)
+            if (eparser.parse(buffer[0]))
             {
-                if (eparser.parse(buffer[i]))
+                if (eparser.event == "put" || eparser.event == "patch")
                 {
-                    if (eparser.event == "put" || eparser.event == "patch")
-                    {
-                        _cb(eparser.data);
-                    }
-                    else if (eparser.event == "keep-alive")
-                    {
-                        //ESP_LOGI(TAG, "[path: %s] >>> keep-alive.", path);   
-                    }
-                    else if (eparser.event == "auth_revoked")
-                    {
-                        //token_data->is_valid = false;
-                    }
-                    else if (eparser.event == "cancel")
-                    {
-                        
-                    }
+                    _cb(eparser.data);
+                }
+                else if (eparser.event == "keep-alive")
+                {
+                    //ESP_LOGI(TAG, "[path: %s] >>> keep-alive.", path);   
+                }
+                else if (eparser.event == "auth_revoked")
+                {
+                    //token_data->is_valid = false;
+                }
+                else if (eparser.event == "cancel")
+                {
+                    
                 }
             }
-
         }
     }
 
