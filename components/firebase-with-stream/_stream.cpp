@@ -31,6 +31,45 @@ void firebase_stream::_loop_task(void *param)
     vTaskDelete(NULL);
 }
 
+void firebase_stream::_opened()
+{
+    _first_data_received = false;
+    _opened_at = esp_timer_get_time();
+}
+
+bool firebase_stream::_wait_for_first_data()
+{
+    if (_first_data_received) return true;
+    int64_t now = esp_timer_get_time(); 
+    return now - _opened_at < _wait_for_first_data_micros;
+}
+
+void firebase_stream::_notify_first_data_received()
+{
+    if (_first_data_received) return;
+    _first_data_received = true;
+}
+
+void firebase_stream::_check_timeout()
+{
+    if (is_timedout) return;
+    
+    int64_t now = esp_timer_get_time();
+    
+    is_timedout = now - _last_data_at >= _timeout_micros;
+
+    if (is_timedout)
+    {
+        ESP_LOGW(TAG, "[path: %s] >>> TIMED OUT! Resuming...", path);
+    }
+}
+
+void firebase_stream::_extend_timeout()
+{
+    is_timedout = false;
+    _last_data_at = esp_timer_get_time();
+}
+
 void firebase_stream::start()
 {
     is_started = true;
@@ -56,6 +95,8 @@ void firebase_stream::_run_stream()
         return;
     }
 
+    _extend_timeout();
+
     std::string url = config->db_url + path + "?auth=" + token_data->id_token;
 
     char *buffer = new char[1];
@@ -79,6 +120,8 @@ void firebase_stream::_run_stream()
 
     ESP_LOGI(TAG, "[path: %s] >>> Connection opened.", path);
 
+    _opened();
+
     int content_length =  esp_http_client_fetch_headers(client);
     int status_code = esp_http_client_get_status_code(client);
 
@@ -89,18 +132,23 @@ void firebase_stream::_run_stream()
         return;
     }
 
-    while (is_started && netstat->is_ready() && token_data->is_valid)
+    while (is_started && !is_timedout && netstat->is_ready() && token_data->is_valid)
     {
         int read_len = 0;
 
         read_len = esp_http_client_read(client, buffer, 1); // set read len to 1 for very instant read.
 
-        if (read_len > 0) {
+        if (read_len > 0) 
+        {
             if (eparser.event_name_parsed())
             {
-                if (eparser.event == "keep-alive")
+                if (eparser.event == "put" || eparser.event == "patch")
                 {
-                    ESP_LOGI(TAG, "[path: %s] >>> keep-alive.", path);   
+                    _extend_timeout();
+                }
+                else if (eparser.event == "keep-alive")
+                {
+                    _extend_timeout();       
                 }
                 else if (eparser.event == "auth_revoked")
                 {
@@ -117,7 +165,18 @@ void firebase_stream::_run_stream()
                 if (eparser.event == "put" || eparser.event == "patch")
                 {
                     _cb(eparser.data);
+                    _notify_first_data_received();
                 }
+            }
+        } 
+        else
+        {
+            _check_timeout();
+
+            // check for receiving error. (re-open required)
+            if (!_wait_for_first_data()) {
+                ESP_LOGE(TAG, "[path: %s] >>> Opened but has receiving error! Re opening...", path);
+                break;
             }
         }
     }

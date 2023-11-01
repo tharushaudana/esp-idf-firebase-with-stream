@@ -134,7 +134,22 @@ private:
 
     event_source_stream_parser eparser;
 
+    bool _first_data_received = false;
+
+    int64_t _wait_for_first_data_micros = 10000000; // 10 seconds
+    int64_t _timeout_micros = 35000000; // 35 seconds
+
+    int64_t _opened_at = 0;
+    int64_t _last_data_at = 0;
+
     static void _loop_task(void *param);
+
+    void _opened();
+    bool _wait_for_first_data();
+    void _notify_first_data_received();
+
+    void _check_timeout();
+    void _extend_timeout();
 
     void _run_stream();
 public:
@@ -144,6 +159,7 @@ public:
     const char* path;
 
     bool is_started = false;
+    bool is_timedout = false;
 
     firebase_netstat_t *netstat;
     firebase_config_t *config;
