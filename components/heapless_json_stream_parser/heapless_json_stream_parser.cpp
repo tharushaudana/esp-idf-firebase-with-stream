@@ -19,6 +19,15 @@ void json_stream_parser::reset() {
     _path.clear();
     _key.key.clear();
     _val.val.clear();
+
+    _is_resetted = true;
+}
+
+bool json_stream_parser::is_resetted()
+{
+    if (!_is_resetted) return false;
+    _is_resetted = false;
+    return true;
 }
 
 void json_stream_parser::replace_prefix_path(std::string old_p, std::string new_p) 
@@ -27,13 +36,14 @@ void json_stream_parser::replace_prefix_path(std::string old_p, std::string new_
 }
 
 void json_stream_parser::_notify_data() {
-    path = _path.to_str(_key);
-    value.val = _val.val;
-    value.type = _val.type;
+    pair.path = _path.to_str(_key);
+    pair.value.val = _val.val;
+    pair.value.type = _val.type;
+    pair.used = false;
 
     if (_use_cb)
     {
-        _cb_data(path, value);
+        _cb_data(pair);
     }
 }
 

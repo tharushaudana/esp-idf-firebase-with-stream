@@ -49,7 +49,7 @@ bool _firebase_crud::update(const char* path, const char *json_data)
         {
             if (jparser.parse(buffer[i]))
             {
-                printf("%s --> %s \n", jparser.path.c_str(), jparser.value.val.c_str());
+                printf("%s --> %s \n", jparser.pair.path.c_str(), jparser.pair.value.val.c_str());
             }
         }
     }

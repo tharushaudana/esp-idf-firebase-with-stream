@@ -85,6 +85,22 @@ struct json_val_t
     }
 };
 
+struct json_pair_t
+{
+    std::string path;
+    json_val_t value;
+
+    bool used = false;
+
+    template <typename T>
+    void get_value_if_path(T& destination, const char* p) 
+    {
+        if (path != p) return;
+        value.get_value(destination);
+        used = true;
+    }
+};
+
 
 /*struct path_t
 {
@@ -276,7 +292,7 @@ struct path_t
     }
 };
 
-typedef std::function<void(std::string, json_val_t)> on_json_stream_data_cb_t;
+typedef std::function<void(json_pair_t)> on_json_stream_data_cb_t;
 
 class json_stream_parser
 {
@@ -298,6 +314,8 @@ private:
 
     bool _use_cb = false;
 
+    bool _is_resetted = false;
+
     void _notify_data();
 
     void _set_current_ptype(int8_t t);
@@ -317,11 +335,11 @@ public:
     json_stream_parser();
 
     // these are when not using callback function
-    std::string path;
-    json_val_t value;
+    json_pair_t pair;
 
     bool parse(char c);
     void replace_prefix_path(std::string old_p, std::string new_p);
     void reset();
+    bool is_resetted();
 };
 

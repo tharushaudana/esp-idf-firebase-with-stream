@@ -57,18 +57,9 @@ void _firebase_auth::_sign_in()
         {
             if (jparser.parse(buffer[i]))
             {
-                if (jparser.path == "/idToken")
-                {
-                    token_data->id_token = jparser.value.val;
-                }
-                else if (jparser.path == "/refreshToken")
-                {
-                    token_data->refresh_token = jparser.value.val;
-                }
-                else if (jparser.path == "/expiresIn")
-                {
-                    jparser.value.get_value(token_data->expires_in);
-                }   
+                jparser.pair.get_value_if_path(token_data->id_token, "/idToken");
+                jparser.pair.get_value_if_path(token_data->refresh_token, "/refreshToken");
+                jparser.pair.get_value_if_path(token_data->expires_in, "/expiresIn");
             }
         }
     }
@@ -112,18 +103,9 @@ void _firebase_auth::_token_refresh()
         {
             if (jparser.parse(buffer[i]))
             {
-                if (jparser.path == "/id_token")
-                {
-                    token_data->id_token = jparser.value.val;
-                }
-                else if (jparser.path == "/refresh_token")
-                {
-                    token_data->refresh_token = jparser.value.val;
-                }
-                else if (jparser.path == "/expires_in")
-                {
-                    jparser.value.get_value(token_data->expires_in);
-                }   
+                jparser.pair.get_value_if_path(token_data->id_token, "/id_token");
+                jparser.pair.get_value_if_path(token_data->refresh_token, "/refresh_token");
+                jparser.pair.get_value_if_path(token_data->expires_in, "/expires_in");
             }
         }
     }

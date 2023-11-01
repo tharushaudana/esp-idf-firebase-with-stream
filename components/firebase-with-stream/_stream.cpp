@@ -2,8 +2,6 @@
 
 static const char *TAG = "FWS:STREAM";
 
-//event_source_stream_parser eparser("event", "data");
-
 firebase_stream::firebase_stream(on_firebase_stream_data_cb_t cb) : eparser("event", "data")
 {
     _cb = cb;

@@ -31,26 +31,26 @@ json_stream_parser jparser2;
 firebase_stream stream_01([](char c) {
   if (jparser1.parse(c))
   {
-    if (jparser1.path == "/path")
+    if (jparser1.pair.path == "/path")
     {
-      jparser1.replace_prefix_path("/data", jparser1.value.val);
+      jparser1.replace_prefix_path("/data", jparser1.pair.value.val);
       return;
     }
     
-    printf("%s --> %s\n", jparser1.path.c_str(), jparser1.value.val.c_str());
+    printf("%s --> %s\n", jparser1.pair.path.c_str(), jparser1.pair.value.val.c_str());
   }
 });
 
 firebase_stream stream_02([](char c) {
   if (jparser2.parse(c))
   {
-    if (jparser2.path == "/path")
+    if (jparser2.pair.path == "/path")
     {
-      jparser2.replace_prefix_path("/data", jparser2.value.val);
+      jparser2.replace_prefix_path("/data", jparser2.pair.value.val);
       return;
     }
     
-    printf("%s --> %s\n", jparser2.path.c_str(), jparser2.value.val.c_str());
+    printf("%s --> %s\n", jparser2.pair.path.c_str(), jparser2.pair.value.val.c_str());
   }
 });
 
