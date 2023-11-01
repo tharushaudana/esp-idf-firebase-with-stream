@@ -15,9 +15,17 @@ event_source_stream_parser::event_source_stream_parser(std::string event_key, st
     _use_cb = false;
 }
 
+bool event_source_stream_parser::event_name_parsed() 
+{
+    if (!_event_name_parsed) return false;
+    _event_name_parsed = false;
+    return true;
+}
+
 void event_source_stream_parser::_notify_event() 
 {
     event = _current_event;
+    _event_name_parsed = true;
     if (!_use_cb) return;
     _cb_char = _cb_stream(_current_event);
 }

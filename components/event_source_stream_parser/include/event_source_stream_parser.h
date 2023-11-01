@@ -33,6 +33,8 @@ private:
 
     bool _use_cb = false;
 
+    bool _event_name_parsed = false;
+
     void _notify_event();
     void _notify_data_char(char c);
 
@@ -53,4 +55,6 @@ public:
     char data;
 
     bool parse(char c);
+
+    bool event_name_parsed();
 };

@@ -96,15 +96,11 @@ void firebase_stream::_run_stream()
         read_len = esp_http_client_read(client, buffer, 1); // set read len to 1 for very instant read.
 
         if (read_len > 0) {
-            if (eparser.parse(buffer[0]))
+            if (eparser.event_name_parsed())
             {
-                if (eparser.event == "put" || eparser.event == "patch")
+                if (eparser.event == "keep-alive")
                 {
-                    _cb(eparser.data);
-                }
-                else if (eparser.event == "keep-alive")
-                {
-                    //ESP_LOGI(TAG, "[path: %s] >>> keep-alive.", path);   
+                    ESP_LOGI(TAG, "[path: %s] >>> keep-alive.", path);   
                 }
                 else if (eparser.event == "auth_revoked")
                 {
@@ -113,6 +109,14 @@ void firebase_stream::_run_stream()
                 else if (eparser.event == "cancel")
                 {
                     
+                }
+            }
+
+            if (eparser.parse(buffer[0]))
+            {
+                if (eparser.event == "put" || eparser.event == "patch")
+                {
+                    _cb(eparser.data);
                 }
             }
         }
