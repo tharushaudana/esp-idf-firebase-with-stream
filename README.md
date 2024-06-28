@@ -36,7 +36,7 @@ To start using this C++ library in your ESP-IDF project, follow these steps:
     fb_config.api_key = "AIzaSyC2KRrFHQpntl4lMpuh-Wql0TB4njcBIlU";
     fb_config.db_url = "https://greenhouse-project-bec1e-default-rtdb.firebaseio.com";
 
-    fb_credentials.email = "tharusha.udana529@gmail.com";
+    fb_credentials.email = "example@gmail.com";
     fb_credentials.password = "tha2003";
 
     firebase.set_config(fb_config);
